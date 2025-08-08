@@ -70,24 +70,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Form submission
-document.querySelector('form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const message = document.getElementById('message').value;
-    
-    // Simple validation
-    if (name && email && message) {
-        // Simulate form submission
-        alert('Thank you for your message! I\'ll get back to you soon.');
-        this.reset();
-    } else {
-        alert('Please fill in all fields.');
-    }
-});
 
 // Add some interactive hover effects
 document.querySelectorAll('.project-card').forEach(card => {
