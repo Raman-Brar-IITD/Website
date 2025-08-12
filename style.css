@@ -141,6 +141,14 @@ textarea:focus {
     animation: fadeInUp 1s ease-out 0.8s forwards;
 }
 
+/* NEW: Container for all hero buttons */
+.hero-buttons {
+    display: flex;
+    flex-wrap: wrap; /* Allows buttons to stack on small screens */
+    align-items: center;
+    gap: 1rem; /* Creates space between buttons */
+}
+
 .cta-btn {
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -159,6 +167,38 @@ textarea:focus {
     transform: translateY(-2px);
     color: white;
 }
+
+/* NEW: Style for the download buttons */
+.cta-btn-2 {
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    
+    /* Animation properties to match the other hero elements */
+    opacity: 0;
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+/* NEW: Stagger the animation for the download buttons */
+.hero-buttons .cta-btn-2:nth-of-type(1) {
+    animation-delay: 1.4s;
+}
+
+.hero-buttons .cta-btn-2:nth-of-type(2) {
+    animation-delay: 1.7s;
+}
+
+.cta-btn-2:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    color: white;
+}
+
 
 @keyframes fadeInUp {
     from {
