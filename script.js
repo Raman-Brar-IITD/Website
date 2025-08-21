@@ -24,7 +24,6 @@ window.addEventListener('scroll', () => {
     let current = '';
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
         if (scrollY >= sectionTop - 200) {
             current = section.getAttribute('id');
         }
@@ -70,210 +69,98 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// --- Main script to fetch and display Hashnode articles ---
 
-// Add some interactive hover effects
-document.querySelectorAll('.project-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-10px) scale(1.02)';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-    });
-});
-
-// Typing effect for hero text (alternative animation)
-function typeWriter(element, text, speed = 50) {
-    let i = 0;
-    element.innerHTML = '';
-    element.style.opacity = '1';
-    
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
-    }
-    type();
-}
-
-// Parallax effect for hero background
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const parallax = document.querySelector('.hero::before');
-    const speed = scrolled * 0.5;
-    
-    if (parallax) {
-        parallax.style.transform = `translateY(${speed}px)`;
-    }
-});
-
-// Add loading animation
-window.addEventListener('load', () => {
-    document.body.classList.add('loaded');
-    
-    // Trigger hero animations
-    setTimeout(() => {
-        AOS.refresh();
-    }, 100);
-});
-
-// Add intersection observer for additional animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('animate');
-        }
-    });
-}, observerOptions);
-
-// Observe all sections
-document.querySelectorAll('section').forEach(section => {
-    observer.observe(section);
-});
-
-// Add dynamic gradient animation to hero
-let gradientPosition = 0;
-setInterval(() => {
-    gradientPosition += 1;
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        hero.style.backgroundPosition = `${gradientPosition}% 50%`;
-    }
-}, 100);
-
-// Enhanced project card interactions
-document.querySelectorAll('.project-card').forEach((card, index) => {
-    card.addEventListener('mouseenter', function() {
-        // Add ripple effect
-        const ripple = document.createElement('div');
-        ripple.style.cssText = `
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(37, 99, 235, 0.1);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            animation: ripple 0.6s ease-out;
-            pointer-events: none;
-        `;
-        
-        this.style.position = 'relative';
-        this.appendChild(ripple);
-        
-        setTimeout(() => {
-            if (ripple.parentNode) {
-                ripple.parentNode.removeChild(ripple);
+// Function to fetch articles from the Hashnode API
+async function getArticles() {
+    const HASHNODE_HOST = 'mlwithbrar.hashnode.dev'; 
+    const query = `
+        query GetPublicationPosts($host: String!) {
+          publication(host: $host) {
+            posts(first: 3) {
+              edges {
+                node {
+                  title
+                  brief
+                  url
+                  publishedAt
+                }
+              }
             }
-        }, 600);
-    });
-});
-
-// Add CSS animation keyframes dynamically
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes ripple {
-        to {
-            width: 300px;
-            height: 300px;
-            opacity: 0;
+          }
         }
-    }
-    
-    .loaded .hero-content > * {
-        animation-play-state: running;
-    }
-    
-    .animate {
-        animation: slideInUp 0.8s ease-out forwards;
-    }
-    
-    @keyframes slideInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
+    `;
+
+    try {
+        const response = await fetch('https://gql.hashnode.com/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query,
+                variables: { host: HASHNODE_HOST },
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        const data = await response.json();
+        
+        if (data.errors) {
+            console.error("GraphQL Errors:", data.errors);
+            throw new Error("Error fetching posts from Hashnode.");
         }
+
+        return data.data.publication.posts.edges;
+    } catch (error) {
+        console.error("Error fetching articles:", error);
+        const blogContainer = document.getElementById('blog-posts-container');
+        blogContainer.innerHTML = `<p style="color: red; text-align: center; width: 100%;">Failed to load articles. Please try again later.</p>`;
+        return []; 
     }
-`;
-document.head.appendChild(style);
-
-// Add easter egg - Konami code
-let konamiCode = [];
-const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-
-document.addEventListener('keydown', (e) => {
-    konamiCode.push(e.keyCode);
-    konamiCode = konamiCode.slice(-10);
-    
-    if (konamiCode.join(',') === konamiSequence.join(',')) {
-        // Easter egg activated
-        document.body.style.animation = 'rainbow 2s infinite';
-        setTimeout(() => {
-            document.body.style.animation = '';
-        }, 10000);
-    }
-});
-
-// Add rainbow animation
-const rainbowStyle = document.createElement('style');
-rainbowStyle.textContent = `
-    @keyframes rainbow {
-        0% { filter: hue-rotate(0deg); }
-        100% { filter: hue-rotate(360deg); }
-    }
-`;
-document.head.appendChild(rainbowStyle);
-
-
-const wordpressApiUrl = "https://api.rss2json.com/v1/api.json?rss_url=https://mlwithraman.wordpress.com/feed/";
-
-fetch(wordpressApiUrl)
-  .then(response => response.json())
-  .then(data => {
-    const blogContainer = document.getElementById("wordpress-blog-posts");
-
-    data.items.slice(0, 3).forEach((post, index) => {
-      const blogCard = document.createElement("div");
-      blogCard.className = "col-lg-4 col-md-6";
-      blogCard.setAttribute("data-aos", "fade-up");
-      blogCard.setAttribute("data-aos-delay", `${(index + 1) * 100}`);
-
-      const publishedDate = new Date(post.pubDate).toLocaleDateString("en-US", {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-
-      blogCard.innerHTML = `
-        <div class="blog-card">
-            <div class="blog-date">${publishedDate}</div>
-            <h5>${post.title}</h5>
-            <p>${stripHtml(post.description).substring(0, 120)}...</p>
-            <a href="${post.link}" class="read-more" target="_blank">Read More <i class="fas fa-arrow-right"></i></a>
-        </div>
-      `;
-
-      blogContainer.appendChild(blogCard);
-    });
-  })
-  .catch(error => {
-    console.error("Failed to load WordPress posts:", error);
-  });
-
-function stripHtml(html) {
-  let div = document.createElement("div");
-  div.innerHTML = html;
-  return div.textContent || div.innerText || "";
 }
+
+// Main function to orchestrate fetching and displaying
+async function displayArticles() {
+    const blogContainer = document.getElementById('blog-posts-container');
+    const articles = await getArticles();
+
+    if (articles && articles.length > 0) {
+        blogContainer.innerHTML = ''; // Clear any previous content
+        articles.forEach((post, index) => {
+            const { title, brief, url, publishedAt } = post.node;
+            
+            const blogCard = document.createElement("div");
+            blogCard.className = "col-lg-4 col-md-6";
+            blogCard.setAttribute("data-aos", "fade-up");
+            blogCard.setAttribute("data-aos-delay", `${(index + 1) * 100}`);
+
+            const publishedDate = new Date(publishedAt).toLocaleDateString("en-US", {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            // This structure matches your style.css for .blog-card
+            blogCard.innerHTML = `
+              <div class="blog-card">
+                  <h5>${title}</h5>
+                  <p>${brief}</p>
+                  <a href="${url}" class="read-more" target="_blank">Read More <i class="fas fa-arrow-right"></i></a>
+              </div>
+            `;
+            
+            blogContainer.appendChild(blogCard);
+        });
+        
+        // Refresh AOS to apply animations to the newly added cards
+        setTimeout(() => AOS.refresh(), 100);
+
+    } else if (articles) { 
+       blogContainer.innerHTML = `<p style="text-align: center; width: 100%;">No articles found.</p>`;
+    }
+}
+
+// Run the script once the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', displayArticles);
