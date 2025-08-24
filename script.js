@@ -1,78 +1,62 @@
+// --- AOS INITIALIZATION ---
 AOS.init({
     duration: 1000,
     easing: 'ease-in-out',
     once: true
 });
 
-// Navbar scroll effect
+// --- NAVBAR SCROLL EFFECT (Updated for dark theme) ---
 window.addEventListener('scroll', function() {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        navbar.style.background = 'rgba(10, 10, 15, 0.9)';
     } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = '0 1px 20px rgba(0, 0, 0, 0.05)';
+        navbar.style.background = 'rgba(10, 10, 15, 0.9)';
     }
 });
 
-// Active nav link highlighting
-const sections = document.querySelectorAll('section');
-const navLinks = document.querySelectorAll('.nav-link');
+// --- TYPEWRITER EFFECT ---
+const words = ["I build interpretable, ethical, and scalable machine learning solutions.", "I empower businesses and drive innovation through data."];
+let i = 0;
+let j = 0;
+let currentWord = "";
+let isDeleting = false;
 
-window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        if (scrollY >= sectionTop - 200) {
-            current = section.getAttribute('id');
+function type() {
+    currentWord = words[i];
+    const typewriterElement = document.getElementById("typewriter");
+    if (isDeleting) {
+        typewriterElement.textContent = currentWord.substring(0, j - 1);
+        j--;
+        if (j === 0) {
+            isDeleting = false;
+            i++;
+            if (i === words.length) {
+                i = 0;
+            }
         }
-    });
-
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + current) {
-            link.classList.add('active');
-        }
-    });
-});
-
-// Scroll to top functionality
-const scrollTopBtn = document.getElementById('scrollTop');
-
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 500) {
-        scrollTopBtn.classList.add('show');
     } else {
-        scrollTopBtn.classList.remove('show');
-    }
-});
-
-scrollTopBtn.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-});
-
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+        typewriterElement.textContent = currentWord.substring(0, j + 1);
+        j++;
+        if (j === currentWord.length) {
+            isDeleting = true;
+            setTimeout(type, 2000); // Pause at end of word
+            return;
         }
-    });
+    }
+    setTimeout(type, 50); // Typing speed
+}
+// Start typing effect only after the rest of the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById("typewriter")) {
+        type();
+    }
+    displayArticles();
 });
 
-// --- Main script to fetch and display Hashnode articles ---
-
-// Function to fetch articles from the Hashnode API
+// --- HASHNODE ARTICLES FETCHING (No change needed) ---
 async function getArticles() {
+    // ... your existing getArticles function ...
     const HASHNODE_HOST = 'mlwithbrar.hashnode.dev'; 
     const query = `
         query GetPublicationPosts($host: String!) {
@@ -121,46 +105,30 @@ async function getArticles() {
     }
 }
 
-// Main function to orchestrate fetching and displaying
 async function displayArticles() {
     const blogContainer = document.getElementById('blog-posts-container');
     const articles = await getArticles();
 
     if (articles && articles.length > 0) {
-        blogContainer.innerHTML = ''; // Clear any previous content
+        blogContainer.innerHTML = '';
         articles.forEach((post, index) => {
-            const { title, brief, url, publishedAt } = post.node;
+            const { title, brief, url } = post.node;
             
-            const blogCard = document.createElement("div");
-            blogCard.className = "col-lg-4 col-md-6";
-            blogCard.setAttribute("data-aos", "fade-up");
-            blogCard.setAttribute("data-aos-delay", `${(index + 1) * 100}`);
-
-            const publishedDate = new Date(publishedAt).toLocaleDateString("en-US", {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-
-            // This structure matches your style.css for .blog-card
-            blogCard.innerHTML = `
-              <div class="blog-card">
-                  <h5>${title}</h5>
-                  <p>${brief}</p>
-                  <a href="${url}" class="read-more" target="_blank">Read More <i class="fas fa-arrow-right"></i></a>
+            const blogCardHTML = `
+              <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="${(index + 1) * 100}">
+                <div class="blog-card">
+                    <h5>${title}</h5>
+                    <p>${brief}</p>
+                    <a href="${url}" class="read-more" target="_blank">Read More <i class="fas fa-arrow-right"></i></a>
+                </div>
               </div>
             `;
-            
-            blogContainer.appendChild(blogCard);
+            blogContainer.innerHTML += blogCardHTML;
         });
         
-        // Refresh AOS to apply animations to the newly added cards
         setTimeout(() => AOS.refresh(), 100);
 
     } else if (articles) { 
        blogContainer.innerHTML = `<p style="text-align: center; width: 100%;">No articles found.</p>`;
     }
 }
-
-// Run the script once the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', displayArticles);

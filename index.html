@@ -6,16 +6,15 @@
     <title>Raman Singh - Data Scientist & ML Engineer</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="animated-bg"></div>
+
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
             <a class="navbar-brand" href="#home">Raman Singh</a>
@@ -24,21 +23,11 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#home">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#projects">Projects</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#vision">Vision</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#blog">Blog</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#vision">Vision</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#blog">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
                 </ul>
             </div>
         </div>
@@ -47,12 +36,14 @@
     <section id="home" class="hero">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-8">
+                <div class="col-lg-10">
                     <div class="hero-content">
-                        <h1>Hi, I'm Raman – Data Scientist turning data into intelligent decisions.</h1>
-                        <p>I build interpretable, ethical, and scalable machine learning solutions that empower businesses and drive innovation.</p>
+                        <h1>Hi, I'm Raman — Data Scientist turning data into intelligent decisions.</h1>
+                        <div class="typewriter" id="typewriter-container">
+                           <span id="typewriter"></span><span class="cursor">|</span>
+                        </div>
                         <div class="hero-buttons">
-                            <a href="#projects" class="cta-btn">See My Projects</a>
+                            <a href="#projects" class="cta-btn">Explore Projects</a>
                             <a href="cv.pdf" class="cta-btn-2" download>Download CV</a>
                             <a href="resume.pdf" class="cta-btn-2" download>Download Resume</a>
                         </div>
@@ -200,7 +191,6 @@
                         <a href="https://www.linkedin.com/in/raman-singh-brar" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                         <a href="https://github.com/Raman-Brar-IITD" title="GitHub"><i class="fab fa-github"></i></a>
                         <a href="https://mlwithbrar.hashnode.dev/" title="Hashnode"><i class="fas fa-hashtag"></i></a>
-                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
             </div>
@@ -212,11 +202,7 @@
             <p>&copy; 2025 Raman Singh. All rights reserved. Built with passion for data and innovation.</p>
         </div>
     </footer>
-
-    <button class="scroll-top" id="scrollTop">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script src="script.js"></script>
